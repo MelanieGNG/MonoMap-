@@ -2,7 +2,7 @@ import express from 'express'
 import 'dotenv/config' 
 import { envs } from './config/envs.plugin'
 import { MongoDatabase } from './data/init'
-import { InicidentModel } from './data/models/incident.model';
+import { MonoModel } from './data/models/mono.model'
 import { AppRoutes } from './presentation/route';
 import { emailJob } from '../domain/jobs/email.job';
 
@@ -12,7 +12,7 @@ app.use(AppRoutes.routes);
 
 (async () =>
     await MongoDatabase.connect({
-      dbName: "IncidentAPI",
+      dbName: "MonoCaseAPI",
       mongoUrl: envs.MONGO_URL ?? ""
     }))();
 console.log(envs.MONGO_URL)
@@ -27,14 +27,15 @@ app.listen(envs.PORT, () => {
 });
 
 app.post("/", async(req, res) =>{
-    const {title, descrption, lat,  lng} = req.body;
-    const newIncident = await InicidentModel.create({
-        title: title,
-        descrption: descrption,
+    const {lat, lng, genre, age, creationDate} = req.body;
+    const newMonoCase = await MonoModel.create({
         lat: lat,
-        lng: lng
+        lng: lng,
+        genre: genre,
+        age: age,
+        creationDate: creationDate
     });
 
-    res.send("Registro Creado");
+    res.send("Caso Registrado");
 
 });
